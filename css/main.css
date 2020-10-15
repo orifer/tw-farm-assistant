@@ -45,6 +45,8 @@ tr.abandonedVillage td{
 
 th {
     background-color: #c1a264 !important;
+    padding-left: 8px;
+    padding-right: 8px;
 }
 
 .villagePadding{

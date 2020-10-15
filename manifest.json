@@ -2,7 +2,7 @@
 	"manifest_version": 2,
 
 	"name": "TW Farm Assistant [DEV]",
-	"version": "0.3",
+	"version": "0.4",
 	"description": "Tribalwars farm assistant",
 	"icons": {
 		"16": "imgs/icon.png",

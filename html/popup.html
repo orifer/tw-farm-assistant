@@ -5,7 +5,7 @@
 
     <style>
         body {
-            width:350px;
+            width:400px;
         }
     </style>
     <link rel="stylesheet" type="text/css" href="../css/main.css">
@@ -15,22 +15,27 @@
     <script src="../js/popup.js"></script>
 </head>
 <body>
-<div id="villages" align="center">
-    <h2>TW Farm Assistant</h2>
-    <p id="currentVillage"></p>
-    <table id="villagesTable" border="1">
-        <tr>
-            <th align="center">Village</th>
-            <th align="center">Coords</th>
-            <th align="center"><img src="../imgs/rechts.png" title="distance" alt="" class="">  </th>
-            <th align="center">Models</th>
-        </tr>
-    </table>
-</div>
 
-<div align="center">
-    <a class="btn options-btn" id="options_link" href=#>Configure farm</a>
-    <div id="status"></div>
-</div>
+    <div id="villages" align="center">
+        <h2>TW Farm Assistant</h2>
+        <p id="currentVillage"></p>
+
+        <table id="villagesTable" border="1">
+            <tr>
+                <th rowspan="2" align="center">Village</th>
+                <th rowspan="2" align="center">Coords</th>
+                <th rowspan="2" align="center"><img src="../imgs/rechts.png" title="distance" alt="" class="">  </th>
+                <th align="center">Models/Massive Attack</th>
+            </tr>
+            <tr>
+                <th id="massive" align="center"></th>
+            </tr>
+        </table>
+    </div>
+
+    <div align="center">
+        <a class="btn options-btn" id="options_link" href=#>Configure farm</a>
+        <div id="status"></div>
+    </div>
 </body>
 </html>

@@ -1,4 +1,5 @@
 var currentVillage = [];
+var villages = [];
 
 /**
  *
@@ -44,10 +45,9 @@ function addVillage(village, units){
 	// Add village coordinates to the first cell
 	cell1.innerHTML = "(" + village.coords[0] + "|" + village.coords[1] + ")";
 	cell1.className = "villagePadding";
-
 	cell2.innerHTML = village.dist;
 
-	var  modelsButtons = getUnitsButton(village.coords[0], village.coords[1], units)
+	var  modelsButtons = getUnitsButton(village.coords[0], village.coords[1], units);
 	$.each(modelsButtons, function( i, val ) {
 		cell3.append(val);
 	});
@@ -57,13 +57,51 @@ function getUnitsButton(coord1, coord2, units){
 	var charsArray = "ABCDEFGHIJKLMOPQRSTUVWXYZ".split("");
 	var buttons = [];
 	$.each(units, function( i, val ) {
-		var deleteButton = document.createElement("BUTTON");
-		deleteButton.innerHTML = charsArray[i];
-		deleteButton.className = "btn model-btn";
-		deleteButton.addEventListener('click', function(){ addAttackToQueue(coord1, coord2, val) }, false);
-		buttons.push(deleteButton);
+		var unitButton = document.createElement("BUTTON");
+		unitButton.innerHTML = charsArray[i];
+		unitButton.className = "btn model-btn";
+		unitButton.addEventListener('click', function(){ addAttackToQueue(coord1, coord2, val) }, false);
+		buttons.push(unitButton);
 	});
 	return buttons;
+}
+
+function getUnitsMassiveButton(units){
+	var charsArray = "ABCDEFGHIJKLMOPQRSTUVWXYZ".split("");
+	var buttons = [];
+	$.each(units, function( i, val ) {
+		var unitButton = document.createElement("BUTTON");
+		unitButton.innerHTML = charsArray[i];
+		unitButton.className = "btn model-btn";
+		unitButton.addEventListener('click', function(){ massiveAttack(val)}, false);
+		buttons.push(unitButton);
+	});
+	return buttons;
+}
+
+function massiveAttack(unitTemplate){
+	var attacks = [];
+	$.each(villages, function (i, val) {
+		var attack = [[val.coords[0],val.coords[1]],unitTemplate];
+		attacks.push(attack);
+	});
+	addAttackListToQueue(attacks);
+}
+
+function addAttackListToQueue(attacks){
+	chrome.storage.sync.get({
+		attacksQueue: []
+	}, function(items) {
+		var attacksQueue = items.attacksQueue;
+		$.each(attacks, function (i, val) {
+			attacksQueue.push(val);
+		});
+		chrome.storage.sync.set({
+			attacksQueue: attacksQueue
+		}, function() {
+			console.log("Attack in queue");
+		});
+	});
 }
 
 function addAttackToQueue(coord1, coord2, val){
@@ -80,7 +118,6 @@ function addAttackToQueue(coord1, coord2, val){
 			console.log("Attack in queue");
 		});
 	});
-
 }
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -115,10 +152,16 @@ document.addEventListener('DOMContentLoaded', function() {
 				$.each(orderedVillages, function (i, village) {
 					addVillage(village, items.unitsArray);
 				});
+
+				// add massive attack buttons
+				villages = orderedVillages;
+				var modelsButtons = getUnitsMassiveButton(items.unitsArray);
+				$.each(modelsButtons, function( i, btn ) {
+					document.getElementById('massive').appendChild(btn);
+				});
+
 			});
 		}
 	});
 
 });
-
-
