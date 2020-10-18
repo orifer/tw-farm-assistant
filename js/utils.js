@@ -71,7 +71,7 @@ function updateVillage(village, callback){
 		for (var i = 0; i < items.villagesArray.length; i++) {
 			if (items.villagesArray[i].coords[0] == village.coords[0] && items.villagesArray[i].coords[1] == village.coords[1]) {
 				items.villagesArray[i].name = village.name;
-				items.villagesArray[i].isAbandoned = !items.villagesArray[i].isAbandoned;
+				items.villagesArray[i].isAbandoned = village.isAbandoned;
 				break;
 			}
 		}

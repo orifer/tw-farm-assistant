@@ -1,5 +1,6 @@
 var currentVillage = [];
 var villages = [];
+var abandonedCounter = 0;
 
 /**
  *
@@ -38,6 +39,7 @@ function addVillage(village, units){
 	var cell1 = newRow.insertCell(1);
 	var cell2 = newRow.insertCell(2);
 	var cell3 = newRow.insertCell(3);
+	var cell4 = newRow.insertCell(4);
 
 	// Add village name
 	cell0.innerHTML = village.name;
@@ -47,9 +49,19 @@ function addVillage(village, units){
 	cell1.className = "villagePadding";
 	cell2.innerHTML = village.dist;
 
+	var checkbox = document.createElement("INPUT");
+	checkbox.setAttribute("type", "checkbox");
+	checkbox.checked = village.isAbandoned ? true : false;
+	checkbox.addEventListener('click', function(){
+		village.isAbandoned = !village.isAbandoned;
+		updateVillage(village);
+		$(this).closest('tr').toggleClass("abandonedVillage");
+	}, false);
+	cell3.appendChild(checkbox);
+
 	var  modelsButtons = getUnitsButton(village.coords[0], village.coords[1], units);
 	$.each(modelsButtons, function( i, val ) {
-		cell3.append(val);
+		cell4.append(val);
 	});
 }
 
@@ -138,7 +150,7 @@ document.addEventListener('DOMContentLoaded', function() {
 			// after receiving currentVillage get stored villages and units models and displays them
 			restore_options(function (items) {
 				var orderedVillages = items.villagesArray;
-				console.log(orderedVillages);
+				// console.log(orderedVillages);
 
 				// add distance to the current village parameter
 				$.each(orderedVillages, function (i, val) {
@@ -153,6 +165,7 @@ document.addEventListener('DOMContentLoaded', function() {
 				// add villages to the table and display in popup
 				$.each(orderedVillages, function (i, village) {
 					addVillage(village, items.unitsArray);
+					if (village.isAbandoned) abandonedCounter++;
 				});
 
 				// add massive attack buttons

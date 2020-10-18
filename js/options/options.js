@@ -98,10 +98,10 @@ function addVillageRow(village){
 	var checkbox = document.createElement("INPUT");
 	checkbox.setAttribute("type", "checkbox");
 	checkbox.checked = village.isAbandoned ? true : false;
-	checkbox.addEventListener('click', function(){
+	checkbox.addEventListener('click', function(){		
+		village.isAbandoned = !village.isAbandoned;
 		updateVillage(village);
-		var row = $(this).closest('tr');
-		row.toggleClass("abandonedVillage");
+		$(this).closest('tr').toggleClass("abandonedVillage");
 	}, false);
 	cell1.appendChild(checkbox);
 
