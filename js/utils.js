@@ -48,7 +48,6 @@ function saveVillage(village, callback){
 	});
 }
 
-
 function removeVillage(village, callback){
 	chrome.storage.sync.get({
 		villagesArray: []

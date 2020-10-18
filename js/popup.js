@@ -82,8 +82,10 @@ function getUnitsMassiveButton(units){
 function massiveAttack(unitTemplate){
 	var attacks = [];
 	$.each(villages, function (i, val) {
-		var attack = [[val.coords[0],val.coords[1]],unitTemplate];
-		attacks.push(attack);
+		if (val.isAbandoned) {
+			var attack = [[val.coords[0],val.coords[1]],unitTemplate];
+			attacks.push(attack);
+		}
 	});
 	addAttackListToQueue(attacks);
 }
