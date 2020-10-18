@@ -91,6 +91,7 @@ As a lover of Tribalwars I developed and shared this tool with the only intent o
 - The abandoned village checkbox is now editable from the popup and configuration
 - Auto-attack sends troops only to abandoned villages
 - Editable village names when clicked (Config)
+- Yo can mark a village as active or abandoned through the village information page
 - The configuration button is now on the top
 
 ### 0.3

@@ -36,9 +36,10 @@ $( document ).ready(function() {
 
 		// villageIsAlreadyStored
 		} else {
+			// Remove village from list
 			// inject button
 			$("#content_value table tbody tr table:last-child tbody").append('<tr>' +
-				'<td colspan="2" id="injectedTd">' +
+				'<td colspan="2" id="injectedTd1">' +
 				'<a id="removeVillageButton" href=#><span class="action-icon-container">' +
 				'<span class="icon header favorite_remove"></span></span> Delete from farm assistant' +
 				'</a>' +
@@ -53,8 +54,31 @@ $( document ).ready(function() {
 				};
 
 				removeVillage(village, function () {
-					$('#injectedTd').remove()
+					$('#injectedTd1').remove()
 				});
+			});
+
+
+			// Mark village as abandoned
+			// inject button
+			$("#content_value table tbody tr table:last-child tbody").append('<tr>' +
+				'<td colspan="2" id="injectedTd1">' +
+				'<span class="action-icon-container">' +
+				'<span class="icon header village"></span></span> Mark village as ' +
+				'<a id="activeVillageButton" href=#>active</a>' +
+				' or ' +
+				'<a id="abandonedVillageButton" href=#>abandoned</a>' +
+				'</td>' +
+				'</tr>');
+
+			// add listener
+			$("#activeVillageButton").click(function () {
+				var village = { isAbandoned: false, coords: coords };
+				updateVillage(village, function () {});
+			});
+			$("#abandonedVillageButton").click(function () {
+				var village = {	isAbandoned: true, coords: coords };
+				updateVillage(village, function () {});
 			});
 		}
 	});
