@@ -2,25 +2,6 @@ var charsArray = "ABCDEFGHIJKLMOPQRSTUVWXYZ".split("");
 
 // Saves options to chrome.storage
 function save_units() {
-	/*var villagesArray = [];
-
-	$("table#villagesTable tr").not(":first-child,:last-child").each(function() {
-		var arrayOfThisRow = [];
-		var tableData = $(this).find('td').not(":last-child");
-		if (tableData.length > 0) {
-			arrayOfThisRow = {
-				name: $(tableData[0]).children().text(), // access input of isAbandoned
-				isAbandoned: $(tableData[1]).children().is(":checked"), // access input of isAbandoned
-				coords:[parseInt($(tableData[2]).text()), parseInt($(tableData[3]).text())]
-			};
-			//arrayOfThisRow['isAbandoned'] = $(tableData[0]).children().is(":checked"); // access input of isAbandoned
-			//arrayOfThisRow['coords'] = [parseInt($(tableData[1]).text()), parseInt($(tableData[2]).text())];
-			console.log(arrayOfThisRow);
-			villagesArray.push(arrayOfThisRow);
-		}
-	});
-	console.log(villagesArray);*/
-
 	var unitsArray = [];
 
 	$("table#unitsTable tr").not(":first-child,:last-child").each(function() {
@@ -34,7 +15,6 @@ function save_units() {
 	});
 
 	chrome.storage.sync.set({
-		/*villagesArray: villagesArray,*/
 		unitsArray: unitsArray
 	}, showSuccessStatus());
 }
@@ -114,9 +94,20 @@ function addVillageRow(village){
 
 	// Add some text to the new cells:
 	cell0.innerHTML = village.name;
-	cell1.innerHTML = '<input type="checkbox" disabled ' + (village.isAbandoned ? 'checked/>' : '/>');
+
+	var checkbox = document.createElement("INPUT");
+	checkbox.setAttribute("type", "checkbox");
+	checkbox.checked = village.isAbandoned ? true : false;
+	checkbox.addEventListener('click', function(){
+		updateVillage(village);
+		var row = $(this).closest('tr');
+		row.toggleClass("abandonedVillage");
+	}, false);
+	cell1.appendChild(checkbox);
+
 	cell2.innerHTML = village.coords[0];
 	cell3.innerHTML = village.coords[1];
+
 	var deleteButton = document.createElement("img");
 	deleteButton.src = "../imgs/delete.png";
 	deleteButton.addEventListener('click', function(){
