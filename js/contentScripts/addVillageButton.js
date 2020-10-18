@@ -33,6 +33,29 @@ $( document ).ready(function() {
 					$('#injectedTd').remove()
 				});
 			});
+
+		// villageIsAlreadyStored
+		} else {
+			// inject button
+			$("#content_value table tbody tr table:last-child tbody").append('<tr>' +
+				'<td colspan="2" id="injectedTd">' +
+				'<a id="removeVillageButton" href=#><span class="action-icon-container">' +
+				'<span class="icon header favorite_remove"></span></span> Delete from farm assistant' +
+				'</a>' +
+				'</td>' +
+				'</tr>');
+
+			// add listener
+			$("#removeVillageButton").click(function () {
+				var village = {
+					isAbandoned: isAbandoned,
+					coords: coords
+				};
+
+				removeVillage(village, function () {
+					$('#injectedTd').remove()
+				});
+			});
 		}
 	});
 });
