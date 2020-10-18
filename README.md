@@ -43,7 +43,7 @@ Now that you have all setup and running your extension popup may look similar to
 
 ![Popup](./imgs/popup.png)
 
-To start farming **MAKE SURE THAT YOU HAVE ONLY ONE TAB OF THE GAME OPEN** and click the model you want to use. Now you may see your attack been placed in the next seconds *et voilá!* 
+To start farming **MAKE SURE THAT YOU HAVE ONLY ONE TAB OF THE GAME OPEN** and click the model you want to use. Now you may see your attack been placed in the next seconds *et voilá!*
 
 #### Step 4 (Share your configuration)
 
@@ -85,7 +85,18 @@ As a lover of Tribalwars I developed and shared this tool with the only intent o
 
 ## Release History
 
-### 0.2 (What's new?)
+### 0.4 (What's new?)
+- New auto-attack buttons
+- Village deletion through button in village information page
+- The abandoned village checkbox is now editable from the popup and configuration
+- Auto-attack sends troops only to abandoned villages
+- Editable village names when clicked (Config)
+- The configuration button is now on the top
+
+### 0.3
+- Icon images fixed
+
+### 0.2
 - Villages with name and abandoned checkbox
 - Automatic village storage through button in village information page
 - Visual indication of abandoned villages
