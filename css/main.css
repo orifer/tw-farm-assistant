@@ -69,3 +69,8 @@ th {
 h1, h2 {
     color: #553421;
 }
+
+.villageName {
+    margin-top: 0;
+    margin-bottom: 0;
+}

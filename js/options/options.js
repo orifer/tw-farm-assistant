@@ -93,12 +93,20 @@ function addVillageRow(village){
 	var cell4 = newRow.insertCell(4);
 
 	// Add some text to the new cells:
-	cell0.innerHTML = village.name;
+	var name = document.createElement("p");
+	name.className = "villageName";
+	name.setAttribute('contenteditable','');
+	name.innerHTML = village.name
+	name.addEventListener('focusout', (event) => {
+		village.name = name.innerHTML;
+		updateVillage(village);
+	});
+	cell0.appendChild(name);
 
 	var checkbox = document.createElement("INPUT");
 	checkbox.setAttribute("type", "checkbox");
 	checkbox.checked = village.isAbandoned ? true : false;
-	checkbox.addEventListener('click', function(){		
+	checkbox.addEventListener('click', function(){
 		village.isAbandoned = !village.isAbandoned;
 		updateVillage(village);
 		$(this).closest('tr').toggleClass("abandonedVillage");
