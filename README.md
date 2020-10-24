@@ -95,6 +95,7 @@ As a lover of Tribalwars I developed and shared this tool with the only intent o
 - The configuration button is now on the top
 - Attack counter when sending auto-attack
 - Stop button when sending auto-attack
+- auto-attack stops if you have no troops
 
 ### 0.3
 - Icon images fixed

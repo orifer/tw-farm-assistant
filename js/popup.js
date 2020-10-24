@@ -109,10 +109,11 @@ function massiveAttack(unitTemplate){
 		}, function(items) {
 			$("#autoattackInfo").text("Sending attack to village " + items.attackNum + " of " + attacks.length);
 		});
+		if (attackNum == attacks.length) window.clearTimeout();
 	}, 500);
 
-	$("#autoattackPanel").removeClass("hide");
 	addAttackListToQueue(attacks);
+	$("#autoattackPanel").removeClass("hide");
 }
 
 function addAttackListToQueue(attacks){
@@ -149,7 +150,7 @@ function addAttackToQueue(coord1, coord2, val){
 
 function clearAttackQueue(){
 	chrome.storage.sync.set({ stopAttack: true });
-	// window.clearTimeout();
+	window.clearTimeout();
 }
 
 document.addEventListener('DOMContentLoaded', function() {

@@ -102,7 +102,7 @@ function placeAttack(){
 		stopAttack = items.stopAttack;
 
 		if (stopAttack) {
-			chrome.storage.sync.set({ stopAttack: false, attacksQueue: [] });
+			stopAtk();
 		} else {
 			attackNum++;
 			var currentAttack = attacksQueue.shift();
@@ -126,12 +126,23 @@ function confirmAttack(){
 	$("input#troop_confirm_go").click();
 }
 
-
 function placeCoordsToAttack(coord1,coord2){
 	$("input.target-input-field").val(coord1 + "|" + coord2);
 }
 
 function placeUnitsToAttack(units){
+	if ( $("input#unit_input_spear")[0].getAttribute('data-all-count') < units[0] ) { alert("Not enough troops"); stopAtk();  }
+	if ( $("input#unit_input_sword")[0].getAttribute('data-all-count') < units[1] ) { alert("Not enough troops"); stopAtk();  }
+	if ( $("input#unit_input_axe")[0].getAttribute('data-all-count') < units[2] ) { alert("Not enough troops"); stopAtk();  }
+	if ( $("input#unit_input_archer")[0].getAttribute('data-all-count') < units[3] ) { alert("Not enough troops"); stopAtk();  }
+	if ( $("input#unit_input_spy")[0].getAttribute('data-all-count') < units[4] ) { alert("Not enough troops"); stopAtk();  }
+	if ( $("input#unit_input_light")[0].getAttribute('data-all-count') < units[5] ) { alert("Not enough troops"); stopAtk();  }
+	if ( $("input#unit_input_marcher")[0].getAttribute('data-all-count') < units[6] ) { alert("Not enough troops"); stopAtk();  }
+	if ( $("input#unit_input_heavy")[0].getAttribute('data-all-count') < units[7] ) { alert("Not enough troops"); stopAtk();  }
+	if ( $("input#unit_input_ram")[0].getAttribute('data-all-count') < units[8] ) { alert("Not enough troops"); stopAtk();  }
+	if ( $("input#unit_input_catapult")[0].getAttribute('data-all-count') < units[9] ) { alert("Not enough troops"); stopAtk();  }
+	if ( $("input#unit_input_knight")[0].getAttribute('data-all-count') < units[10] ) { alert("Not enough troops"); stopAtk();  }
+
 	$("input#unit_input_spear").val(units[0]);
 	$("input#unit_input_sword").val(units[1]);
 	$("input#unit_input_axe").val(units[2]);
@@ -143,4 +154,8 @@ function placeUnitsToAttack(units){
 	$("input#unit_input_ram").val(units[8]);
 	$("input#unit_input_catapult").val(units[9]);
 	$("input#unit_input_knight").val(units[10]);
+}
+
+function stopAtk() {
+	chrome.storage.sync.set({ stopAttack: false, attacksQueue: [] });
 }
