@@ -1,6 +1,7 @@
 var currentVillage = [];
 var villages = [];
 var abandonedCounter = 0;
+var attackNum = 0;
 
 /**
  *
@@ -99,6 +100,18 @@ function massiveAttack(unitTemplate){
 			attacks.push(attack);
 		}
 	});
+
+	chrome.storage.sync.set({ attackNum: 0 });
+
+	window.setInterval(function(){
+		chrome.storage.sync.get({
+			attackNum: attackNum
+		}, function(items) {
+			$("#autoattackInfo").text("Sending attack to village " + items.attackNum + " of " + attacks.length);
+		});
+	}, 500);
+
+	$("#autoattackPanel").removeClass("hide");
 	addAttackListToQueue(attacks);
 }
 
@@ -113,7 +126,7 @@ function addAttackListToQueue(attacks){
 		chrome.storage.sync.set({
 			attacksQueue: attacksQueue
 		}, function() {
-			console.log("Attack in queue");
+			// console.log("Attack in queue");
 		});
 	});
 }
@@ -129,14 +142,20 @@ function addAttackToQueue(coord1, coord2, val){
 		chrome.storage.sync.set({
 			attacksQueue: attacksQueue
 		}, function() {
-			console.log("Attack in queue");
+			// console.log("Attack in queue");
 		});
 	});
+}
+
+function clearAttackQueue(){
+	chrome.storage.sync.set({ stopAttack: true });
+	// window.clearTimeout();
 }
 
 document.addEventListener('DOMContentLoaded', function() {
 	// add click listener to options button (redirect to options page)
 	document.getElementById("options_link").addEventListener("click", function(){chrome.tabs.create({'url': "/html/options.html"}); });
+	document.getElementById("autoattackBtn").addEventListener("click", function(){clearAttackQueue()});
 
 	//gets current village
 	sendMessage('getCurrentVillage', null, function (response){

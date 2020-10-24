@@ -1,7 +1,8 @@
-
 var attacksQueue = [];
 var status = "WAITING"; //WAITING, PLACING_UNITS, CONFIRMING_ATTACK
 var refreshID = setInterval(tick, 500);
+var attackNum = 0;
+var stopAttack = false;
 
 restore_variables();
 
@@ -10,7 +11,8 @@ console.log(attacksQueue);
 
 function tick(){
 	chrome.storage.sync.get({
-		attacksQueue: []
+		attacksQueue: [],
+		attackNum: attackNum
 	}, function(items) {
 		attacksQueue = items.attacksQueue;
 	});
@@ -31,9 +33,13 @@ function tick(){
 function restore_variables() {
 	chrome.storage.sync.get({
 		attacksQueue: [],
+		attackNum: attackNum,
+		stopAttack: stopAttack,
 		status : "WAITING"
 	}, function(items) {
 		attacksQueue = items.attacksQueue;
+		attackNum = items.attackNum;
+		stopAttack = items.stopAttack;
 		status = items.status;
 		console.log(attacksQueue);
 		continueAttack();
@@ -86,17 +92,33 @@ chrome.runtime.onMessage.addListener( function(request, sender, sendResponse) {
 	console.log(request);
 });
 
+
 function placeAttack(){
-	var currentAttack = attacksQueue.shift();
-	chrome.storage.sync.set({
-		attacksQueue: attacksQueue
-	}, function() {
-		console.log("Placing attack");
-		console.log(attacksQueue);
+	stopAttack = false;
+
+	chrome.storage.sync.get({
+		stopAttack: stopAttack
+	}, function(items) {
+		stopAttack = items.stopAttack;
+
+		if (stopAttack) {
+			chrome.storage.sync.set({ stopAttack: false, attacksQueue: [] });
+		} else {
+			attackNum++;
+			var currentAttack = attacksQueue.shift();
+			chrome.storage.sync.set({
+				attacksQueue: attacksQueue,
+				attackNum: attackNum
+			}, function() {
+				// console.log(attacksQueue);
+			});
+			placeCoordsToAttack(currentAttack[0][0],currentAttack[0][1]);
+			placeUnitsToAttack(currentAttack[1]);
+			$("input#target_attack").click();
+		}
 	});
-	placeCoordsToAttack(currentAttack[0][0],currentAttack[0][1]);
-	placeUnitsToAttack(currentAttack[1]);
-	$("input#target_attack").click();
+
+
 }
 
 function confirmAttack(){
@@ -122,4 +144,3 @@ function placeUnitsToAttack(units){
 	$("input#unit_input_catapult").val(units[9]);
 	$("input#unit_input_knight").val(units[10]);
 }
-
