@@ -153,10 +153,15 @@ function clearAttackQueue(){
 	window.clearTimeout();
 }
 
+function scavenge(){
+	chrome.storage.sync.set({ status: "SCAVENGE" });
+}
+
 document.addEventListener('DOMContentLoaded', function() {
 	// add click listener to options button (redirect to options page)
-	document.getElementById("options_link").addEventListener("click", function(){chrome.tabs.create({'url': "/html/options.html"}); });
-	document.getElementById("autoattackBtn").addEventListener("click", function(){clearAttackQueue()});
+	document.getElementById("options_link").addEventListener("click", function(){ chrome.tabs.create({'url': "/html/options.html"}); });
+	document.getElementById("stopAttackBtn").addEventListener("click", function(){ clearAttackQueue() });
+	// document.getElementById("gathering_link").addEventListener("click", function(){ scavenge() });
 
 	//gets current village
 	sendMessage('getCurrentVillage', null, function (response){

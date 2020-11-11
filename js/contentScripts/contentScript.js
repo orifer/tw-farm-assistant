@@ -1,5 +1,5 @@
 var attacksQueue = [];
-var status = "WAITING"; //WAITING, PLACING_UNITS, CONFIRMING_ATTACK
+var status = "WAITING"; //WAITING, PLACING_UNITS, CONFIRMING_ATTACK, SCAVENGE
 var refreshID = setInterval(tick, 500);
 var attackNum = 0;
 var stopAttack = false;
@@ -12,12 +12,14 @@ console.log(attacksQueue);
 function tick(){
 	chrome.storage.sync.get({
 		attacksQueue: [],
+		status: status,
 		attackNum: attackNum
 	}, function(items) {
 		attacksQueue = items.attacksQueue;
 	});
 
 	if (status == "WAITING"){
+		console.log("Estado es waiting");
 		if (attacksQueue.length > 0){
 			status = "PLACING_UNITS";
 			chrome.storage.sync.set({
@@ -27,6 +29,15 @@ function tick(){
 			});
 			location = "game.php?screen=place";
 		}
+	} else if (status == "SCAVENGE"){
+		console.log("Estado es scavenge");
+		status = "SCAVENGE_PLACING_UNITS";
+		chrome.storage.sync.set({
+			status: status
+		}, function() {
+			console.log("State [Placing Units SCAVENGE]");
+		});
+		location = "game.php?screen=place&mode=scavenge";
 	}
 }
 
@@ -65,7 +76,7 @@ function continueAttack(){
 				console.log("State [Waiting 1]");
 			});
 		}
-	}else if(status=="CONFIRMING_ATTACK"){
+	} else if(status=="CONFIRMING_ATTACK"){
 		status = "WAITING";
 		chrome.storage.sync.set({
 			status: status
@@ -73,8 +84,21 @@ function continueAttack(){
 			console.log("State [Waiting 2]");
 		});
 		confirmAttack();
+	} else if (status=="SCAVENGE_PLACING_UNITS"){
+		status = "WAITING";
+		chrome.storage.sync.set({
+			status: status
+		}, function() {
+			console.log("State [Scavenge]");
+		});
+		scavenge();
 	}
 
+}
+
+function scavenge() {
+	// var test = $("input.target-input-field").val(coord1 + "|" + coord2);
+	alert("bien");
 }
 
 //message handler
@@ -91,7 +115,6 @@ chrome.runtime.onMessage.addListener( function(request, sender, sendResponse) {
 	}
 	console.log(request);
 });
-
 
 function placeAttack(){
 	stopAttack = false;
@@ -117,8 +140,6 @@ function placeAttack(){
 			$("input#target_attack").click();
 		}
 	});
-
-
 }
 
 function confirmAttack(){
@@ -131,29 +152,29 @@ function placeCoordsToAttack(coord1,coord2){
 }
 
 function placeUnitsToAttack(units){
-	if ( $("input#unit_input_spear")[0].getAttribute('data-all-count') < units[0] ) { alert("Not enough troops"); stopAtk();  }
-	if ( $("input#unit_input_sword")[0].getAttribute('data-all-count') < units[1] ) { alert("Not enough troops"); stopAtk();  }
-	if ( $("input#unit_input_axe")[0].getAttribute('data-all-count') < units[2] ) { alert("Not enough troops"); stopAtk();  }
-	if ( $("input#unit_input_archer")[0].getAttribute('data-all-count') < units[3] ) { alert("Not enough troops"); stopAtk();  }
-	if ( $("input#unit_input_spy")[0].getAttribute('data-all-count') < units[4] ) { alert("Not enough troops"); stopAtk();  }
-	if ( $("input#unit_input_light")[0].getAttribute('data-all-count') < units[5] ) { alert("Not enough troops"); stopAtk();  }
-	if ( $("input#unit_input_marcher")[0].getAttribute('data-all-count') < units[6] ) { alert("Not enough troops"); stopAtk();  }
-	if ( $("input#unit_input_heavy")[0].getAttribute('data-all-count') < units[7] ) { alert("Not enough troops"); stopAtk();  }
-	if ( $("input#unit_input_ram")[0].getAttribute('data-all-count') < units[8] ) { alert("Not enough troops"); stopAtk();  }
-	if ( $("input#unit_input_catapult")[0].getAttribute('data-all-count') < units[9] ) { alert("Not enough troops"); stopAtk();  }
-	if ( $("input#unit_input_knight")[0].getAttribute('data-all-count') < units[10] ) { alert("Not enough troops"); stopAtk();  }
+	if ( $("input#unit_input_spear").length 	&&  $("input#unit_input_spear")[0].getAttribute('data-all-count') < units[0] ) { alert("Not enough troops"); stopAtk();  }
+	if ( $("input#unit_input_sword").length 	&&  $("input#unit_input_sword")[0].getAttribute('data-all-count') < units[1] ) { alert("Not enough troops"); stopAtk();  }
+	if ( $("input#unit_input_axe").length 		&&  $("input#unit_input_axe")[0].getAttribute('data-all-count') < units[2] ) { alert("Not enough troops"); stopAtk();  }
+	if ( $("input#unit_input_archer").length 	&&  $("input#unit_input_archer")[0].getAttribute('data-all-count') < units[3] ) { alert("Not enough troops"); stopAtk();  }
+	if ( $("input#unit_input_spy").length 		&&  $("input#unit_input_spy")[0].getAttribute('data-all-count') < units[4] ) { alert("Not enough troops"); stopAtk();  }
+	if ( $("input#unit_input_light").length 	&&  $("input#unit_input_light")[0].getAttribute('data-all-count') < units[5] ) { alert("Not enough troops"); stopAtk();  }
+	if ( $("input#unit_input_marcher").length 	&&  $("input#unit_input_marcher")[0].getAttribute('data-all-count') < units[6] ) { alert("Not enough troops"); stopAtk();  }
+	if ( $("input#unit_input_heavy").length 	&&  $("input#unit_input_heavy")[0].getAttribute('data-all-count') < units[7] ) { alert("Not enough troops"); stopAtk();  }
+	if ( $("input#unit_input_ram").length		&&  $("input#unit_input_ram")[0].getAttribute('data-all-count') < units[8] ) { alert("Not enough troops"); stopAtk();  }
+	if ( $("input#unit_input_catapult").length 	&&  $("input#unit_input_catapult")[0].getAttribute('data-all-count') < units[9] ) { alert("Not enough troops"); stopAtk();  }
+	if ( $("input#unit_input_knight").length 	&&  $("input#unit_input_knight")[0].getAttribute('data-all-count') < units[10] ) { alert("Not enough troops"); stopAtk();  }
 
-	$("input#unit_input_spear").val(units[0]);
-	$("input#unit_input_sword").val(units[1]);
-	$("input#unit_input_axe").val(units[2]);
-	$("input#unit_input_archer").val(units[3]);
-	$("input#unit_input_spy").val(units[4]);
-	$("input#unit_input_light").val(units[5]);
-	$("input#unit_input_marcher").val(units[6]);
-	$("input#unit_input_heavy").val(units[7]);
-	$("input#unit_input_ram").val(units[8]);
-	$("input#unit_input_catapult").val(units[9]);
-	$("input#unit_input_knight").val(units[10]);
+	if ( $("input#unit_input_spear").length) 	$("input#unit_input_spear").val(units[0]);
+	if ( $("input#unit_input_sword").length) 	$("input#unit_input_sword").val(units[1]);
+	if ( $("input#unit_input_axe").length) 		$("input#unit_input_axe").val(units[2]);
+	if ( $("input#unit_input_archer").length) 	$("input#unit_input_archer").val(units[3]);
+	if ( $("input#unit_input_spy").length) 		$("input#unit_input_spy").val(units[4]);
+	if ( $("input#unit_input_light").length) 	$("input#unit_input_light").val(units[5]);
+	if ( $("input#unit_input_marcher").length) 	$("input#unit_input_marcher").val(units[6]);
+	if ( $("input#unit_input_heavy").length) 	$("input#unit_input_heavy").val(units[7]);
+	if ( $("input#unit_input_ram").length) 		$("input#unit_input_ram").val(units[8]);
+	if ( $("input#unit_input_catapult").length) $("input#unit_input_catapult").val(units[9]);
+	if ( $("input#unit_input_knight").length) 	$("input#unit_input_knight").val(units[10]);
 }
 
 function stopAtk() {

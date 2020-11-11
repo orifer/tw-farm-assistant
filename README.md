@@ -85,6 +85,9 @@ As a lover of Tribalwars I developed and shared this tool with the only intent o
 
 ## Release History
 
+### 0.4.1 (What's new?)
+- Fix: Check if the unit exists in the world before doing anything.
+
 ### 0.4 (What's new?)
 - New auto-attack buttons
 - Village deletion through button in village information page
