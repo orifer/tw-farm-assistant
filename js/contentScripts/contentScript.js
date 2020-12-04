@@ -19,7 +19,7 @@ function tick(){
 	});
 
 	if (status == "WAITING"){
-		console.log("Estado es waiting");
+		// console.log("Estado es waiting");
 		if (attacksQueue.length > 0){
 			status = "PLACING_UNITS";
 			chrome.storage.sync.set({
@@ -30,7 +30,7 @@ function tick(){
 			location = "game.php?screen=place";
 		}
 	} else if (status == "SCAVENGE"){
-		console.log("Estado es scavenge");
+		// console.log("Estado es scavenge");
 		status = "SCAVENGE_PLACING_UNITS";
 		chrome.storage.sync.set({
 			status: status

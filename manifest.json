@@ -85,6 +85,26 @@
 				"js/utils.js",
 				"js/contentScripts/addVillageButton.js"
 			]
+		},
+
+		{
+			"matches": [
+				"*://*.guerrastribales.es/*"
+			],
+			"include_globs": ["*am_farm*"],
+			"js": [
+				"js/contentScripts/farmAssistantScreen.js"
+			]
+		},
+
+		{
+			"matches": [
+				"*://*.guerrastribales.es/*"
+			],
+			"include_globs": ["*place&try*"],
+			"js": [
+				"js/contentScripts/sendAttack.js"
+			]
 		}
 	],
 	"permissions": [
