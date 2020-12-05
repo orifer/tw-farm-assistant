@@ -12,9 +12,10 @@ $( document ).ready(function() {
 		checked = !checked;
 	});
 
-	// var clickeableButton = $("#plunder_list tbody tr:nth-child(3) td:nth-child(9) a");
-	var clickeableButton = $(".farm_icon");
+	// var A_Button = $("#plunder_list tbody tr:nth-child(3) td:nth-child(9) a");
+	// A_Button.click();
 
+	var clickeableButton = $(".farm_icon");
 	clickeableButton.click(function () {
 		console.log("cheko");
 		if (checked) {
