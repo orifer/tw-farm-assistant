@@ -85,6 +85,10 @@ As a lover of Tribalwars I developed and shared this tool with the only intent o
 
 ## Release History
 
+### 0.5.0 (What's new?)
+- New: Auto check on farm assistant
+- New: Precision attack
+
 ### 0.4.2 (What's new?)
 - Fix: Storage limit when adding a lot of villages
 
